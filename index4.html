@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lepexasu | Games Cube</title>
+    <style>
+        @import url('https://googleapis.com');
+
+        :root {
+            --bg-color: #050505;
+            --accent-red: #ff0000;
+            --bright-red: #ff4d4d;
+            --pixel-font: 'Press Start 2P', cursive;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes blinker { 50% { opacity: 0; } }
+        .blink { animation: blinker 1s linear infinite; }
+
+        .fade-out {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+        }
+        body.shutting-down .fade-out { opacity: 1; }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(0deg, rgba(255, 0, 0, 0.05) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.05) 2px, transparent 2px);
+            background-size: 40px 40px;
+            color: #fff;
+            font-family: var(--pixel-font);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .header-images {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 530px;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .header-images img {
+            flex: 1;
+            height: 150px;
+            width: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent-red);
+            image-rendering: pixelated;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.95);
+            border: 4px double var(--accent-red);
+            padding: 40px;
+            text-align: center;
+            box-shadow: 10px 10px 0px rgba(255, 0, 0, 0.15);
+            animation: fadeIn 0.8s ease-out;
+            max-width: 530px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: var(--bright-red);
+            text-shadow: 0 0 10px var(--accent-red);
+            margin-bottom: 40px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+            justify-items: center;
+        }
+
+        .game-item {
+            width: 160px;
+            height: 160px;
+            border: 4px double var(--accent-red);
+            background: rgba(255, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s;
+            position: relative;
+            overflow: visible;
+        }
+
+        .game-item:hover {
+            background: rgba(255, 0, 0, 0.2);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.4);
+            border-color: var(--bright-red);
+        }
+
+        .game-icon {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: grayscale(80%) brightness(0.8);
+            transition: 0.4s;
+            image-rendering: pixelated;
+        }
+
+        .game-name {
+            font-size: 0.55rem;
+            color: #eee;
+            text-transform: uppercase;
+            padding: 0 5px;
+            text-align: center;
+            transition: 0.3s ease-in-out;
+            display: block;
+        }
+
+        .game-item:hover .game-icon {
+            filter: grayscale(0%) brightness(1.2);
+            transform: scale(1.1);
+        }
+
+        .game-item:hover .game-name {
+            transform: scale(1.4);
+            color: var(--bright-red);
+        }
+
+        .game-label {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            color: var(--accent-red);
+            font-size: 0.45rem;
+        }
+
+        .disconnect-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 35px;
+            border: 2px solid #333;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: none;
+        }
+
+        .disconnect-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="fade-out"></div>
+
+    <div class="header-images">
+        <img src="https://i.ibb.co/LXTRd0qy/photo-2026-04-09-19-33-03.jpg" alt="Photo 1">
+        <img src="https://i.ibb.co/Pv4HYx4n/photo-2026-04-09-19-32-59.jpg" alt="Photo 2">
+    </div>
+
+    <div class="card">
+        <h1>GAMES<span class="blink">_</span></h1>
+        <div class="games-grid">
+            <a href="https://minecraft.net" target="_blank" class="game-item">
+                <span class="game-label">01</span>
+                <img src="https://i.ibb.co/hF2GPgzG/pngwing-com.png" class="game-icon">
+                <span class="game-name">Minecraft</span>
+            </a>
+            <a href="https://terraria.org" target="_blank" class="game-item">
+                <span class="game-label">02</span>
+                <img src="https://i.ibb.co/230whkcZ/toppng-com-tree-terraria-tree-logo-401x741.png" class="game-icon">
+                <span class="game-name">Terraria</span>
+            </a>
+            <a href="https://steampowered.com" target="_blank" class="game-item">
+                <span class="game-label">03</span>
+                <img src="https://i.ibb.co/NggzyFSC/fe87435d12ef7642af67d9bc82a8b3cd-removebg-preview.png" class="game-icon">
+                <span class="game-name">Dead Cells</span>
+            </a>
+            <a href="https://steampowered.com" target="_blank" class="game-item">
+                <span class="game-label">04</span>
+                <img src="https://i.ibb.co/gZ2xVfCT/pngegg.png" class="game-icon">
+                <span class="game-name">Slime Rancher</span>
+            </a>
+        </div>
+        <button class="disconnect-btn" onclick="disconnect()">DISCONNECT</button>
+    </div>
+
+    <script>
+        function disconnect() {
+            document.body.classList.add('shutting-down');
+            setTimeout(() => {
+                window.location.href = "https://lepexasu.github.io/biolepexasu.github.io/";
+            }, 500);
+        }
+    </script>
+</body>
+</html>
