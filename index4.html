@@ -20,9 +20,9 @@
       --text: #fff4f6;
       --muted: #c48a96;
     }
- 
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
- 
+
     body {
       background: var(--bg);
       color: var(--text);
@@ -35,7 +35,7 @@
       align-items: center;
       padding: 30px 16px;
     }
- 
+
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: -2;
@@ -52,7 +52,7 @@
         linear-gradient(90deg, var(--red-faint) 1px, transparent 1px);
       background-size: 40px 40px;
     }
- 
+
     html::after {
       content: " ";
       position: fixed;
@@ -62,7 +62,7 @@
       pointer-events: none;
       z-index: 100;
     }
- 
+
     .main-container {
       width: 100%;
       max-width: 550px;
@@ -71,14 +71,14 @@
       align-items: center;
       gap: 34px;
     }
- 
+
     .photo-row {
       display: flex;
       gap: 20px;
       width: 100%;
       align-items: flex-start;
     }
- 
+
     .photo {
       flex: 1;
       width: 0;
@@ -88,13 +88,13 @@
     }
     .photo:nth-child(1) { transform: rotate(-2deg); }
     .photo:nth-child(2) { transform: rotate(2deg); margin-top: 24px; }
- 
+
     .photo:hover {
       transform: translateY(-10px) rotate(0) scale(1.04);
       filter: drop-shadow(0 18px 35px rgba(255,31,75,.3));
       z-index: 2;
     }
- 
+
     .photo::before, .photo::after {
       content: '';
       position: absolute;
@@ -106,7 +106,7 @@
     }
     .photo::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
     .photo::after  { right: -5px; bottom: -5px; border-left: 0; border-top: 0; }
- 
+
     .polaroid {
       background: #ffffff;
       padding: 4% 4% 14%;
@@ -123,7 +123,7 @@
       object-fit: cover;
       background: #140609;
     }
- 
+
     .card {
       position: relative;
       width: 100%;
@@ -144,7 +144,7 @@
     }
     .card::before { top: -6px; left: -6px; border-right: 0; border-bottom: 0; }
     .card::after  { right: -6px; bottom: -6px; border-left: 0; border-top: 0; }
- 
+
     h1 {
       display: inline-block;
       font-family: 'VT323', monospace;
@@ -156,94 +156,138 @@
       line-height: 1;
       margin-bottom: 22px;
     }
- 
+
     .blink { animation: blinker 1s linear infinite; }
     @keyframes blinker { 50% { opacity: 0; } }
- 
- 
+
+
     .games-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 16px;
       margin-bottom: 8px;
     }
- 
+
     .game-item {
       position: relative;
       width: 100%;
       aspect-ratio: 1 / 1;
+      overflow: hidden;
       border: 1.5px solid var(--red-soft);
-      background: rgba(255,31,75,.06);
+      background: #140609;
+      cursor: default;
+      transition: border-color .25s, box-shadow .25s;
+    }
+
+
+    .game-photo {
+      position: absolute;
+      inset: 0;
+      background: var(--img, none) center / cover no-repeat;
+      filter: grayscale(70%) brightness(.8);
+      transition: filter .3s, transform .3s;
+    }
+    /* цветные копии фото для глитча */
+    .game-photo::before, .game-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+    .game-photo::before { filter: saturate(3) hue-rotate(-50deg); }
+    .game-photo::after  { filter: saturate(3) hue-rotate(110deg); }
+
+    
+    .game-item.empty::before {
+      content: '+ ФОТО';
+      position: absolute;
+      inset: 0;
+      margin: 10px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      cursor: default;
-      transition: background .25s, border-color .25s, box-shadow .25s, transform .25s;
+      border: 2px dashed var(--red-soft);
+      font-family: 'VT323', monospace;
+      font-size: 1.8rem;
+      color: var(--red);
+      pointer-events: none;
+      transition: color .25s, border-color .25s;
     }
-    .game-item:hover {
-      background: rgba(45,255,110,.08);
-      border-color: var(--green);
-      box-shadow: 0 0 18px rgba(45,255,110,.3), 4px 4px 0 var(--red);
-      transform: translateY(-4px);
-    }
- 
+    .game-item.empty:hover::before { color: var(--green); border-color: var(--green); }
+
     .game-label {
       position: absolute;
-      top: 8px;
-      left: 10px;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      padding: 3px 8px;
       font-family: 'Orbitron', sans-serif;
       font-size: .6rem;
       letter-spacing: 2px;
-      color: var(--muted);
+      color: var(--text);
+      background: rgba(7,5,5,.78);
+      border-right: 1.5px solid var(--red-soft);
+      border-bottom: 1.5px solid var(--red-soft);
     }
- 
-    .game-icon {
-      width: 45%;
-      height: 45%;
-      object-fit: contain;
-      filter: grayscale(80%) brightness(.85);
-      transition: filter .3s, transform .3s;
-    }
-    .game-item:hover .game-icon {
-      filter: grayscale(0%) brightness(1.2);
-      transform: scale(1.1);
-    }
- 
 
-    .game-icon--ph {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'VT323', monospace;
-      font-size: 2.6rem;
-      line-height: 1;
-      color: var(--red);
-      border: 2px dashed var(--red-soft);
-      filter: none;
-    }
-    .game-item:hover .game-icon--ph {
-      filter: none;
-      color: var(--green);
-      border-color: var(--green);
-    }
- 
     .game-name {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 2;
+      padding: 18px 8px 9px;
+      text-align: center;
       font-family: 'Orbitron', sans-serif;
       font-size: .7rem;
       letter-spacing: 2px;
       text-transform: uppercase;
-      padding: 0 6px;
       color: var(--text);
-      transition: transform .3s ease-in-out, color .3s;
+      background: linear-gradient(transparent, rgba(7,5,5,.92));
+      transition: color .3s;
+    }
+
+
+    .game-item:hover {
+      border-color: var(--green);
+      box-shadow: 0 0 18px rgba(45,255,110,.3), 4px 4px 0 var(--red);
+      animation: tile-jitter .45s steps(1, end) infinite;
+    }
+    .game-item:hover .game-photo {
+      filter: grayscale(0%) brightness(1.1);
+      transform: scale(1.05);
+    }
+    .game-item:hover .game-photo::before {
+      opacity: .85;
+      animation: glitch-a .55s steps(1, end) infinite;
+    }
+    .game-item:hover .game-photo::after {
+      opacity: .85;
+      animation: glitch-b .45s steps(1, end) infinite;
     }
     .game-item:hover .game-name {
-      transform: scale(1.12);
       color: var(--green);
+      animation: name-glitch .5s steps(1, end) infinite;
     }
- 
-  
+
+    @keyframes tile-jitter {
+      0%   { transform: translate(0, -4px); }
+      20%  { transform: translate(-3px, -3px); }
+      40%  { transform: translate(2px, -5px); }
+      60%  { transform: translate(0, -4px); }
+      80%  { transform: translate(-1px, -4px); }
+      100% { transform: translate(0, -4px); }
+    }
+    @keyframes name-glitch {
+      0%   { text-shadow: 2px 0 var(--red), -2px 0 var(--green); transform: translateX(0); }
+      25%  { text-shadow: -3px 0 var(--red), 3px 0 var(--green); transform: translateX(3px); }
+      50%  { text-shadow: none; transform: translateX(0); }
+      75%  { text-shadow: 2px 1px var(--red), -2px -1px var(--green); transform: translateX(-2px); }
+      100% { text-shadow: 1px 0 var(--red), -1px 0 var(--green); transform: translateX(0); }
+    }
+
+   
     .disconnect-btn {
       position: relative;
       overflow: hidden;
@@ -273,7 +317,7 @@
     }
     .disconnect-btn::before { color: var(--green); }
     .disconnect-btn::after  { color: #ffffff; }
- 
+
     .disconnect-btn:hover, .disconnect-btn:focus-visible {
       background: var(--red);
       color: #1a0206;
@@ -290,7 +334,7 @@
       opacity: 1;
       animation: glitch-b .45s steps(1, end) infinite;
     }
- 
+
     @keyframes btn-jitter-red {
       0%   { transform: translate(0, 0) scale(1.04); background: var(--red); }
       15%  { transform: translate(-3px, 1px) scale(1.04) skewX(-4deg); }
@@ -316,7 +360,7 @@
       75%  { clip-path: inset(85% 0 0 0);   transform: translate(-3px, 0); }
       100% { clip-path: inset(20% 0 55% 0); transform: translate(4px, 1px); }
     }
- 
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); filter: blur(5px); }
       to   { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -327,9 +371,11 @@
       .polaroid, .card { animation: none; }
       .disconnect-btn:hover, .disconnect-btn:focus-visible,
       .disconnect-btn:hover::before, .disconnect-btn:focus-visible::before,
-      .disconnect-btn:hover::after, .disconnect-btn:focus-visible::after { animation: none; }
+      .disconnect-btn:hover::after, .disconnect-btn:focus-visible::after,
+      .game-item:hover, .game-item:hover .game-name,
+      .game-item:hover .game-photo::before, .game-item:hover .game-photo::after { animation: none; }
     }
- 
+
     .fade-out {
       position: fixed; inset: 0;
       background: #000;
@@ -339,13 +385,13 @@
       transition: opacity .5s ease-in-out;
     }
     body.shutting-down .fade-out { opacity: 1; }
- 
+
     .card .bar {
       position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
       background: linear-gradient(90deg, var(--red), var(--green), var(--red));
       opacity: .75;
     }
- 
+
     @media (max-width: 480px) {
       .photo-row { gap: 12px; }
       .card { padding: 28px 16px 24px; }
@@ -355,9 +401,9 @@
   </style>
 </head>
 <body>
- 
+
   <div class="fade-out"></div>
- 
+
   <div class="main-container">
     <div class="photo-row">
       <div class="photo">
@@ -371,52 +417,50 @@
         </div>
       </div>
     </div>
- 
+
     <div class="card">
       <h1>GAMES<span class="blink">_</span></h1>
- 
+
       <div class="games-grid">
+
         <div class="game-item">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/hF2GPgzG/pngwing-com.png')"></div>
           <span class="game-label">01</span>
-          <img src="https://i.ibb.co/hF2GPgzG/pngwing-com.png" class="game-icon" alt="">
           <span class="game-name">Minecraft</span>
         </div>
         <div class="game-item">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/230whkcZ/toppng-com-tree-terraria-tree-logo-401x741.png')"></div>
           <span class="game-label">02</span>
-          <img src="https://i.ibb.co/zTbs71FS/App-icon-1-3-Update.webp" class="game-icon" alt="">
           <span class="game-name">Terraria</span>
         </div>
-        <div class="game-item">
-
-            
-            <div class="https://i.ibb.co/VYf3cWzv/6d63fb43435cd23f622f511ad68de26d.png">M</div>
+        <div class="game-item empty">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/VYf3cWzv/6d63fb43435cd23f622f511ad68de26d.png')"></div>
+          <span class="game-label">03</span>
           <span class="game-name">Metro</span>
         </div>
         <div class="game-item">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/W4VB5XNt/pngegg.png')"></div>
           <span class="game-label">04</span>
-          <img src="https://i.ibb.co/W4VB5XNt/pngegg.png" class="game-icon" alt="">
           <span class="game-name">Slime Rancher</span>
         </div>
-        <div class="game-item">
+        <div class="game-item empty">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/1YBdxr6f/MAFIA-Definitive-Edition-ICO-by-NC831.png')"></div>
           <span class="game-label">05</span>
-       
-          <div class="game-icon game-icon--ph">MF</div>
           <span class="game-name">Mafia</span>
         </div>
-        <div class="game-item">
+        <div class="game-item empty">
+          <div class="game-photo" style="--img: url('https://i.ibb.co/BVtsdf8W/hotline-miami-icon-by-keke4050-dfl2mir.png')"></div>
           <span class="game-label">06</span>
-         
-          <div class="game-icon game-icon--ph">HM</div>
           <span class="game-name">Hotline Miami</span>
         </div>
       </div>
- 
+
       <button class="disconnect-btn" data-text="DISCONNECT" onclick="disconnect()">DISCONNECT</button>
- 
+
       <div class="bar"></div>
     </div>
   </div>
- 
+
   <script>
     function disconnect() {
       document.body.classList.add('shutting-down');
@@ -425,7 +469,6 @@
       }, 500);
     }
   </script>
- 
+
 </body>
 </html>
- 
